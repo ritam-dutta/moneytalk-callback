@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Money Talk login callback</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; color: #222; background: #fff; }
+  code { display: block; word-break: break-all; background: #f3f3f3; padding: 12px; border-radius: 6px; margin: 12px 0; }
+  button { font-size: 16px; padding: 8px 16px; cursor: pointer; }
+  .err { color: #b00020; }
+</style>
+</head>
+<body>
+<h1>Money Talk login</h1>
+<div id="out">Reading the login result...</div>
+<script>
+  // Runs only in your browser. Nothing is sent anywhere.
+  var p = new URLSearchParams(location.search);
+  var out = document.getElementById("out");
+  var code = p.get("code");
+  if (code) {
+    code = code.replace(/#_$/, "");
+    out.innerHTML = "<p>Copy this code and paste it into your terminal (not into any chat). It works once and expires in minutes.</p><code id='c'></code><button id='b'>Copy code</button>";
+    document.getElementById("c").textContent = code;
+    document.getElementById("b").onclick = function () {
+      navigator.clipboard.writeText(code).then(function () { document.getElementById("b").textContent = "Copied"; });
+    };
+    history.replaceState(null, "", location.pathname);   // remove the code from the address bar and history
+  } else if (p.get("error")) {
+    out.innerHTML = "<p class='err'></p>";
+    out.firstChild.textContent = "Login was not completed: " + (p.get("error_description") || p.get("error"));
+  } else {
+    out.textContent = "This page is the redirect address for the Money Talk Instagram app. It only shows the login code after you sign in.";
+  }
+</script>
+</body>
+</html>
